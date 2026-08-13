@@ -12,12 +12,12 @@ namespace FileSecurityApp.Services
         /// </summary>
         public static byte[] GenerateKey()
         {
-            using (var rng = new RNGCryptoServiceProvider())
+            byte[] key = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
             {
-                byte[] key = new byte[32];
                 rng.GetBytes(key);
-                return key;
             }
+            return key;
         }
 
         /// <summary>
@@ -25,12 +25,12 @@ namespace FileSecurityApp.Services
         /// </summary>
         public static byte[] GenerateIV()
         {
-            using (var rng = new RNGCryptoServiceProvider())
+            byte[] iv = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
             {
-                byte[] iv = new byte[16];
                 rng.GetBytes(iv);
-                return iv;
             }
+            return iv;
         }
 
         /// <summary>
@@ -55,9 +55,16 @@ namespace FileSecurityApp.Services
                     throw new ArgumentException("El IV debe tener exactamente 16 bytes");
 
                 result.OriginalData = data;
-                result.OriginalContent = Encoding.UTF8.GetString(data);
+                try
+                {
+                    result.OriginalContent = Encoding.UTF8.GetString(data);
+                }
+                catch
+                {
+                    result.OriginalContent = "[Contenido binario]";
+                }
 
-                using (var aes = new AesCryptoServiceProvider())
+                using (var aes = Aes.Create())
                 {
                     aes.Key = key;
                     aes.IV = iv;
@@ -96,7 +103,7 @@ namespace FileSecurityApp.Services
         /// <summary>
         /// Descifra datos usando AES-256-CBC
         /// </summary>
-        public static SecurityResult Decrypt(byte[] encryptedData, byte[] key, byte[] iv = null, bool ivIsPrepended = true)
+        public static SecurityResult Decrypt(byte[]? encryptedData, byte[] key, byte[]? iv = null, bool ivIsPrepended = true)
         {
             var result = new SecurityResult
             {
@@ -111,7 +118,7 @@ namespace FileSecurityApp.Services
                 if (key == null || key.Length != 32)
                     throw new ArgumentException("La clave debe tener exactamente 32 bytes (256 bits)");
 
-                byte[] actualIV = iv;
+                byte[]? actualIV = iv;
                 byte[] dataToDecrypt = encryptedData;
 
                 // Extraer IV del inicio si está prepended
@@ -129,7 +136,7 @@ namespace FileSecurityApp.Services
                 result.OriginalData = encryptedData;
                 result.OriginalContent = Convert.ToBase64String(encryptedData);
 
-                using (var aes = new AesCryptoServiceProvider())
+                using (var aes = Aes.Create())
                 {
                     aes.Key = key;
                     aes.IV = actualIV;

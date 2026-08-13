@@ -13,6 +13,7 @@ namespace FileSecurityApp.Models
         {
             FilePath = string.Empty;
             FileName = string.Empty;
+            Content = Array.Empty<byte>();
             ContentAsString = string.Empty;
             FileExtension = string.Empty;
         }

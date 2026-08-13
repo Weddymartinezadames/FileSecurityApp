@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using FileSecurityApp.Models;
 
@@ -58,7 +59,7 @@ namespace FileSecurityApp.Utils
                 if (data == null || data.Length == 0)
                     throw new ArgumentException("No hay datos para escribir");
 
-                string directory = Path.GetDirectoryName(filePath);
+                string? directory = Path.GetDirectoryName(filePath);
                 if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
 
@@ -82,7 +83,7 @@ namespace FileSecurityApp.Utils
                 if (string.IsNullOrWhiteSpace(filePath))
                     throw new ArgumentException("La ruta del archivo no puede estar vacía");
 
-                string directory = Path.GetDirectoryName(filePath);
+                string? directory = Path.GetDirectoryName(filePath);
                 if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
 

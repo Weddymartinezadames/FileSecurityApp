@@ -17,6 +17,8 @@ namespace FileSecurityApp.Models
             Message = string.Empty;
             OriginalContent = string.Empty;
             ProcessedContent = string.Empty;
+            OriginalData = Array.Empty<byte>();
+            ProcessedData = Array.Empty<byte>();
             FilePath = string.Empty;
             OperationType = string.Empty;
         }
